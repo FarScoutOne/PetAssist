@@ -1,4 +1,5 @@
-from flask import Flask
+from flask import Flask, request, url_for, render_template
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
@@ -7,12 +8,21 @@ app = Flask(__name__)
 def index():
     return "<h1>Hello</h1>"
 
-
-@app.route("/home")
+@app.route("/home", methods=["GET"])
 def home():
     return "<h1>Home</h1>"
-
 
 @app.route("/json")
 def json():
     return {"mykey": "JSON Value!", "mylist": [1, 2, 3, 4, 5]}
+
+@app.route("/dynamic", defaults={"user_input": "default"})
+@app.route("/dynamic/<user_input>")
+def dynamic(user_input):
+    return f"<h1>The user entered: {user_input}</h1>"
+
+@app.route("/query")
+def query():
+    first = request.args.get("first")
+    second = request.args.get("second")
+    return f"<h1>The query string contains: {first} and {second}</h1>"

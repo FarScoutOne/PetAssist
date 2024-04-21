@@ -2,6 +2,8 @@ from flask import Flask, request, url_for, render_template
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite3"
+db = SQLAlchemy(app)
 
 
 @app.route("/")

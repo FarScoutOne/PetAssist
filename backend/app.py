@@ -26,3 +26,10 @@ def query():
     first = request.args.get("first")
     second = request.args.get("second")
     return f"<h1>The query string contains: {first} and {second}</h1>"
+
+@app.route("/acceptjson")
+def acceptjson():
+    json_data = request.get_json()
+    api_input = json_data["mylist"]
+    hello = json_data["hello"]
+    return {"api_input": api_input, "hello": hello}

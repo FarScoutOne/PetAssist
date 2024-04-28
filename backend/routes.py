@@ -1,4 +1,5 @@
-from flask import Blueprint
+from flask import Blueprint, request, jsonify
+import json
 
 from.models import Owner,pet_food, Pet, Food, Activity
 from .extensions import db
@@ -8,6 +9,17 @@ main = Blueprint("main", __name__)
 @main.route("/")
 def index():
     return "<h1>This is from the Blueprint</h1>"
+
+@main.route("/add_owner", methods=['POST'])
+def add_owner():
+    data = request.get_json()
+
+    new_owner = Owner(name=data['name'], age=data['age'], role=data['role'])
+    db.session.add(new_owner)
+    db.session.commit()
+
+    return jsonify({"message": "Owner added"}), 201
+
 
 @main.route("/acceptjson")
 def acceptjson():

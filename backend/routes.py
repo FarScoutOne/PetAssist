@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, redirect
 import json
 
 from.models import Owner,pet_food, Pet, Food, Activity
@@ -10,6 +10,31 @@ main = Blueprint("main", __name__)
 def index():
     return "<h1>This is from the Blueprint</h1>"
 
+@main.route("/owners")
+def get_owners():
+    owners = Owner.query.all()
+
+    owner_list = []
+    for owner in owners:
+        owner_dict = {
+            "name": owner.name,
+            "age": owner.age,
+            "role": owner.role
+        }
+        owner_list.append(owner_dict)
+
+    return jsonify({"owners": owner_list})
+
+@main.route("/owners/<int:owner_id>")
+def get_owner(owner_id):
+    owner = Owner.query.get_or_404(owner_id)
+    owner_dict = {
+        "name": owner.name,
+        "age": owner.age,
+        "role": owner.role
+    }
+    return jsonify(owner_dict)
+
 @main.route("/add_owner", methods=['POST'])
 def add_owner():
     data = request.get_json()
@@ -19,6 +44,216 @@ def add_owner():
     db.session.commit()
 
     return jsonify({"message": "Owner added"}), 201
+
+@main.route('/owner/<int:id>', methods=['DELETE'])
+def delete_owner(id):
+    owner_to_delete = Owner.query.get_or_404(id)
+    try:
+        db.session.delete(owner_to_delete)
+        db.session.commit()
+        return redirect('/owners')
+    except:
+        return 'There was a problem deleting that owner'
+
+@main.route("/pets")
+def get_all_pets():
+    pets = Pet.query.all()
+
+    pet_list = []
+    for pet in pets:
+        pet_dict = {
+            "name": pet.name,
+            "type": pet.type
+        }
+        pet_list.append(pet_dict)
+
+    return jsonify({"pets": pet_list})
+
+@main.route("/add_pet", methods=['POST'])
+def add_pet():
+    data = request.get_json()
+
+    new_pet = Pet(name=data['name'], type=data['type'])
+    db.session.add(new_pet)
+    db.session.commit()
+
+    return jsonify({"message": "Pet added"}), 201
+
+@main.route("/pets/<int:pet_id>", methods=['GET'])
+def get_pet(pet_id):
+    pet = Pet.query.get_or_404(pet_id)
+    pet_dict = {
+        "name": pet.name,
+        "type": pet.type
+    }
+    return jsonify(pet_dict)
+
+@main.route('/pet/<int:id>', methods=['DELETE'])
+def delete_pet(id):
+    pet_to_delete = Pet.query.get_or_404(id)
+    try:
+        db.session.delete(pet_to_delete)
+        db.session.commit()
+        return redirect('/pets')
+    except:
+        return 'There was a problem deleting that owner'
+
+@main.route("/add_food", methods=['POST'])
+def add_food():
+    data = request.get_json()
+
+    new_food = Food(brand=data['brand'], flavor=data['flavor'])
+    db.session.add(new_food)
+    db.session.commit()
+
+    return jsonify({"message": "Food added"}), 201
+
+@main.route("/foods")
+def get_all_foods():
+    foods = Food.query.all()
+
+    food_list = []
+    for food in foods:
+        food_dict = {
+            "brand": food.brand,
+            "flavor": food.flavor
+        }
+        food_list.append(food_dict)
+
+    return jsonify({"foods": food_list})
+
+@main.route("/foods/<int:food_id>", methods=['GET'])
+def get_food(food_id):
+    food = Food.query.get_or_404(food_id)
+    food_dict = {
+        "brand": food.brand,
+        "flavor": food.flavor
+    }
+    return jsonify(food_dict)
+
+@main.route("/foods/<int:food_id>", methods=['DELETE'])
+def delete_food(food_id):
+    food_to_delete = Food.query.get_or_404(food_id)
+    try:
+        db.session.delete(food_to_delete)
+        db.session.commit()
+        return redirect('/foods')
+    except:
+        return 'There was a problem deleting that food'
+
+@main.route("/add_food_to_pet", methods=['POST'])
+def add_food_to_pet():
+    data = request.get_json()
+
+    pet_id = data['pet_id']
+    food_id = data['food_id']
+
+    pet = Pet.query.get(pet_id)
+    food = Food.query.get(food_id)
+
+    pet.foods.append(food)
+    db.session.commit()
+
+    return jsonify({"message": "Food added to pet"}), 201
+
+@main.route("/activities")
+def get_all_activities():
+    activities = Activity.query.all()
+
+    activity_list = []
+    for activity in activities:
+        activity_dict = {
+            "name": activity.activityName,
+            "description": activity.activityDescription,
+            "equipment": activity.equipmentNeeded
+        }
+        activity_list.append(activity_dict)
+
+    return jsonify({"activities": activity_list})
+
+@main.route("/add_activity", methods=['POST'])
+def add_activity():
+    data = request.get_json()
+
+    new_activity = Activity(activityName=data['activityName'], activityDescription=data['activityDescription'], equipmentNeeded=data['equipmentNeeded'])
+    db.session.add(new_activity)
+    db.session.commit()
+
+    return jsonify({"message": "Activity added"}), 201
+
+@main.route("/activities/<int:activity_id>", methods=['GET'])
+def get_activity(activity_id):
+    activity = Activity.query.get_or_404(activity_id)
+    activity_dict = {
+        "name": activity.activityName,
+        "description": activity.activityDescription,
+        "equipment": activity.equipmentNeeded
+    }
+    return jsonify(activity_dict)
+
+@main.route("/update_owner/<int:owner_id>", methods=['PUT'])
+def update_owner(owner_id):
+    owner = Owner.query.get_or_404(owner_id)
+    data = request.get_json()
+
+    owner.name = data['name']
+    owner.age = data['age']
+    owner.role = data['role']
+
+    db.session.commit()
+
+    return jsonify({"message": "Owner updated"}), 200
+
+@main.route("/activities/<int:activity_id>", methods=['DELETE'])
+def delete_activity(activity_id):
+    activity_to_delete = Activity.query.get_or_404(activity_id)
+    try:
+        db.session.delete(activity_to_delete)
+        db.session.commit()
+        return redirect('/activities')
+    except:
+        return 'There was a problem deleting that activity'
+
+@main.route("/update_pet/<int:pet_id>", methods=['PUT'])
+def update_pet(pet_id):
+    pet = Pet.query.get_or_404(pet_id)
+    data = request.get_json()
+
+    pet.name = data['name']
+    pet.type = data['type']
+
+    db.session.commit()
+
+    return jsonify({"message": "Pet updated"}), 200
+
+@main.route("/update_food/<int:food_id>", methods=['PUT'])
+def update_food(food_id):
+    food = Food.query.get_or_404(food_id)
+    data = request.get_json()
+
+    food.brand = data['brand']
+    food.flavor = data['flavor']
+
+    db.session.commit()
+
+    return jsonify({"message": "Food updated"}), 200
+
+@main.route("/update_activity/<int:activity_id>", methods=['PUT'])
+def update_activity(activity_id):
+    activity = Activity.query.get_or_404(activity_id)
+    data = request.get_json()
+
+    activity.activityName = data['activityName']
+    activity.activityDescription = data['activityDescription']
+    activity.equipmentNeeded = data['equipmentNeeded']
+
+    db.session.commit()
+
+    return jsonify({"message": "Activity updated"}), 200
+
+
+
+
 
 
 @main.route("/acceptjson")

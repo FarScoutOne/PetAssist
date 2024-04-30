@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, redirect
 import json
 
-from.models import Owner,pet_food, Pet, Food, Activity
+from.models import Owner, pet_food, Pet, Food, Activity, ScheduledActivity
 from .extensions import db
 
 main = Blueprint("main", __name__)
@@ -252,8 +252,43 @@ def update_activity(activity_id):
     return jsonify({"message": "Activity updated"}), 200
 
 
+@main.route("/scheduled_activities", methods=['GET'])
+def get_scheduled_activities():
+    scheduled_activities = ScheduledActivity.query.all()
 
+    scheduled_activities_list = []
+    for activity in scheduled_activities:
+        activity_dict = {
+            "activity_id": activity.activity_id,
+            "pet_id": activity.pet_id,
+            "time": activity.time
+        }
+        scheduled_activities_list.append(activity_dict)
 
+    return jsonify({'scheduled_activities': scheduled_activities_list})
+
+@main.route("/update_scheduled_activity/<int:scheduled_activity_id>", methods=['PUT'])
+def update_scheduled_activity(scheduled_activity_id):
+    scheduled_activity = ScheduledActivity.query.get_or_404(scheduled_activity_id)
+    data = request.get_json()
+
+    scheduled_activity.activity_id = data['activity_id']
+    scheduled_activity.pet_id = data['pet_id']
+    scheduled_activity.time = data['time']
+
+    db.session.commit()
+
+    return jsonify({"message": "Scheduled Activity updated"}), 200
+
+@main.route("/update_scheduled_activity/<int:scheduled_activity_id>", methods=['DELETE'])
+def delete_scheduled_activity(scheduled_activity_id):
+    scheduled_activity = ScheduledActivity.query.get_or_404(scheduled_activity_id)
+    try:
+        db.session.delete(scheduled_activity)
+        db.session.commit()
+        return redirect('/scheduled_activities')
+    except:
+        return 'There was a problem deleting that scheduled activity'
 
 
 @main.route("/acceptjson")

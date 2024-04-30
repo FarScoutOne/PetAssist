@@ -51,4 +51,3 @@ class ScheduledActivity(db.Model):
     owner_id = db.Column(db.ForeignKey("owner.id"))
     pet_id = db.Column(db.ForeignKey("pet.id"))
     deadline = db.Column(db.DateTime)
-    complete = db.Column(db.Boolean)

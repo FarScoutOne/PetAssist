@@ -1,14 +1,16 @@
 from flask import Blueprint, request, jsonify, redirect
 import json
 
-from.models import Owner, pet_food, Pet, Food, Activity, ScheduledActivity
+from .models import Owner, Pet, Food, Activity, ScheduledActivity
 from .extensions import db
 
 main = Blueprint("main", __name__)
 
+
 @main.route("/")
 def index():
     return "<h1>This is from the Blueprint</h1>"
+
 
 @main.route("/owners")
 def get_owners():
@@ -25,6 +27,7 @@ def get_owners():
 
     return jsonify({"owners": owner_list})
 
+
 @main.route("/owners/<int:owner_id>")
 def get_owner(owner_id):
     owner = Owner.query.get_or_404(owner_id)
@@ -34,6 +37,7 @@ def get_owner(owner_id):
         "role": owner.role
     }
     return jsonify(owner_dict)
+
 
 @main.route("/add_owner", methods=['POST'])
 def add_owner():
@@ -45,6 +49,7 @@ def add_owner():
 
     return jsonify({"message": "Owner added"}), 201
 
+
 @main.route('/owner/<int:id>', methods=['DELETE'])
 def delete_owner(id):
     owner_to_delete = Owner.query.get_or_404(id)
@@ -54,6 +59,7 @@ def delete_owner(id):
         return redirect('/owners')
     except:
         return 'There was a problem deleting that owner'
+
 
 @main.route("/pets")
 def get_all_pets():
@@ -69,6 +75,7 @@ def get_all_pets():
 
     return jsonify({"pets": pet_list})
 
+
 @main.route("/add_pet", methods=['POST'])
 def add_pet():
     data = request.get_json()
@@ -79,6 +86,7 @@ def add_pet():
 
     return jsonify({"message": "Pet added"}), 201
 
+
 @main.route("/pets/<int:pet_id>", methods=['GET'])
 def get_pet(pet_id):
     pet = Pet.query.get_or_404(pet_id)
@@ -87,6 +95,7 @@ def get_pet(pet_id):
         "type": pet.type
     }
     return jsonify(pet_dict)
+
 
 @main.route('/pet/<int:id>', methods=['DELETE'])
 def delete_pet(id):
@@ -98,6 +107,7 @@ def delete_pet(id):
     except:
         return 'There was a problem deleting that owner'
 
+
 @main.route("/add_food", methods=['POST'])
 def add_food():
     data = request.get_json()
@@ -107,6 +117,7 @@ def add_food():
     db.session.commit()
 
     return jsonify({"message": "Food added"}), 201
+
 
 @main.route("/foods")
 def get_all_foods():
@@ -122,6 +133,7 @@ def get_all_foods():
 
     return jsonify({"foods": food_list})
 
+
 @main.route("/foods/<int:food_id>", methods=['GET'])
 def get_food(food_id):
     food = Food.query.get_or_404(food_id)
@@ -130,6 +142,7 @@ def get_food(food_id):
         "flavor": food.flavor
     }
     return jsonify(food_dict)
+
 
 @main.route("/foods/<int:food_id>", methods=['DELETE'])
 def delete_food(food_id):
@@ -140,6 +153,7 @@ def delete_food(food_id):
         return redirect('/foods')
     except:
         return 'There was a problem deleting that food'
+
 
 @main.route("/add_food_to_pet", methods=['POST'])
 def add_food_to_pet():
@@ -156,6 +170,7 @@ def add_food_to_pet():
 
     return jsonify({"message": "Food added to pet"}), 201
 
+
 @main.route("/activities")
 def get_all_activities():
     activities = Activity.query.all()
@@ -171,15 +186,18 @@ def get_all_activities():
 
     return jsonify({"activities": activity_list})
 
+
 @main.route("/add_activity", methods=['POST'])
 def add_activity():
     data = request.get_json()
 
-    new_activity = Activity(activityName=data['activityName'], activityDescription=data['activityDescription'], equipmentNeeded=data['equipmentNeeded'])
+    new_activity = Activity(activityName=data['activityName'], activityDescription=data['activityDescription'],
+                            equipmentNeeded=data['equipmentNeeded'])
     db.session.add(new_activity)
     db.session.commit()
 
     return jsonify({"message": "Activity added"}), 201
+
 
 @main.route("/activities/<int:activity_id>", methods=['GET'])
 def get_activity(activity_id):
@@ -190,6 +208,7 @@ def get_activity(activity_id):
         "equipment": activity.equipmentNeeded
     }
     return jsonify(activity_dict)
+
 
 @main.route("/update_owner/<int:owner_id>", methods=['PUT'])
 def update_owner(owner_id):
@@ -204,6 +223,7 @@ def update_owner(owner_id):
 
     return jsonify({"message": "Owner updated"}), 200
 
+
 @main.route("/activities/<int:activity_id>", methods=['DELETE'])
 def delete_activity(activity_id):
     activity_to_delete = Activity.query.get_or_404(activity_id)
@@ -213,6 +233,7 @@ def delete_activity(activity_id):
         return redirect('/activities')
     except:
         return 'There was a problem deleting that activity'
+
 
 @main.route("/update_pet/<int:pet_id>", methods=['PUT'])
 def update_pet(pet_id):
@@ -226,6 +247,7 @@ def update_pet(pet_id):
 
     return jsonify({"message": "Pet updated"}), 200
 
+
 @main.route("/update_food/<int:food_id>", methods=['PUT'])
 def update_food(food_id):
     food = Food.query.get_or_404(food_id)
@@ -237,6 +259,7 @@ def update_food(food_id):
     db.session.commit()
 
     return jsonify({"message": "Food updated"}), 200
+
 
 @main.route("/update_activity/<int:activity_id>", methods=['PUT'])
 def update_activity(activity_id):
@@ -267,6 +290,7 @@ def get_scheduled_activities():
 
     return jsonify({'scheduled_activities': scheduled_activities_list})
 
+
 @main.route("/update_scheduled_activity/<int:scheduled_activity_id>", methods=['PUT'])
 def update_scheduled_activity(scheduled_activity_id):
     scheduled_activity = ScheduledActivity.query.get_or_404(scheduled_activity_id)
@@ -279,6 +303,7 @@ def update_scheduled_activity(scheduled_activity_id):
     db.session.commit()
 
     return jsonify({"message": "Scheduled Activity updated"}), 200
+
 
 @main.route("/update_scheduled_activity/<int:scheduled_activity_id>", methods=['DELETE'])
 def delete_scheduled_activity(scheduled_activity_id):
@@ -298,27 +323,35 @@ def acceptjson():
     hello = json_data["hello"]
     return {"api_input": api_input, "hello": hello}
 
+
 def insert_data():
     husband = Owner(name="Bob", age="38", role="parent")
     wife = Owner(name="Alice", age=34, role="parent")
     cat_pet = Pet(name="Spot", type="cat")
     db.session.add_all([husband, wife, cat_pet])
 
-    new_activity = Activity(activityName="feed", activityDescription="Feed one can of wet food and one scoop of dry food.", equipmentNeeded="1 can of wet food, dry food",owner=husband, pet=cat_pet)
-    play_activity = Activity(activityName="play", activityDescription="Play indoors and get him to run around and catch.", equipmentNeeded="toys", owner=wife, pet=cat_pet)
-    
+    new_activity = Activity(activityName="feed",
+                            activityDescription="Feed one can of wet food and one scoop of dry food.",
+                            equipmentNeeded="1 can of wet food, dry food", owner=husband, pet=cat_pet)
+    play_activity = Activity(activityName="play",
+                             activityDescription="Play indoors and get him to run around and catch.",
+                             equipmentNeeded="toys", owner=wife, pet=cat_pet)
+
     db.session.add_all([new_activity, play_activity])
     db.session.commit()
+
 
 def update_first_owner():
     owner = Owner.query.first()
     owner.name = 'Charlie'
     db.session.commit()
 
+
 def delete_first_owner():
     owner = Owner.query.first()
     db.session.delete(owner)
     db.session.commit()
+
 
 def query_tables():
     first_owner = Owner.query.first()
@@ -333,6 +366,7 @@ def query_tables():
     for activity in second_owner.activities:
         print(f"Activity: {activity.activityName}  Pet: {activity.pet_id}")
 
+
 def add_foods_to_pets():
     first_food = Food(brand="Fancy Feast", flavor="Turkey Delight")
     second_food = Food(brand="Blue Wilderness", flavor="Alaskan Salmon")
@@ -344,12 +378,14 @@ def add_foods_to_pets():
     db.session.add_all([first_food, second_food])
     db.session.commit()
 
+
 def query_pet_foods():
     first_pet = Pet.query.filter_by(name="Spot").first()
 
     print("Spot's Food")
     for food in first_pet.foods:
         print(f"Food: {food.brand}: {food.flavor}")
+
 
 def get_all_owners():
     owners = Owner.query.all()
@@ -359,4 +395,3 @@ def get_all_owners():
 
     owner_count = Owner.query.count()
     print(f"Owner count: {owner_count}")
-

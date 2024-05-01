@@ -223,7 +223,6 @@ def get_all_activities():
         activity_dict = {
             "name": activity.activityName,
             "description": activity.activityDescription,
-            "equipment": activity.equipmentNeeded
         }
         activity_list.append(activity_dict)
 
@@ -234,8 +233,7 @@ def get_all_activities():
 def add_activity():
     data = request.get_json()
 
-    new_activity = Activity(activityName=data['activityName'], activityDescription=data['activityDescription'],
-                            equipmentNeeded=data['equipmentNeeded'])
+    new_activity = Activity(activityName=data['activityName'], activityDescription=data['activityDescription'])
     db.session.add(new_activity)
     db.session.commit()
 
@@ -248,7 +246,6 @@ def get_activity(activity_id):
     activity_dict = {
         "name": activity.activityName,
         "description": activity.activityDescription,
-        "equipment": activity.equipmentNeeded
     }
     return jsonify(activity_dict)
 
@@ -271,7 +268,6 @@ def update_activity(activity_id):
 
     activity.activityName = data['activityName']
     activity.activityDescription = data['activityDescription']
-    activity.equipmentNeeded = data['equipmentNeeded']
 
     db.session.commit()
 

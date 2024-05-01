@@ -352,11 +352,9 @@ def insert_data():
 
     # Add activities
     feed_activity = Activity(activityName="feed",
-                             activityDescription="Feed one can of wet food and one scoop of dry food.",
-                             equipmentNeeded="1 can of wet food, dry food", owner=new_owner1, pet=new_pet3)
+                             activityDescription="Feed one can of wet food and one scoop of dry food.")
     play_activity = Activity(activityName="play",
-                             activityDescription="Play indoors and get him to run around and catch.",
-                             equipmentNeeded="toys", owner=new_owner3, pet=new_pet1)
+                             activityDescription="Play indoors and get him to run around and catch.")
 
     db.session.add_all([feed_activity, play_activity])
     db.session.commit()

@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify, redirect
+from sqlalchemy import func
 
 from .models import Owner, Pet, Food, Activity, ScheduledActivity
 from .extensions import db
@@ -284,23 +285,31 @@ def get_scheduled_activities():
         activity_dict = {
             "activity_id": activity.activity_id,
             "pet_id": activity.pet_id,
-            "time": activity.time
+            "deadline": activity.deadline
         }
         scheduled_activities_list.append(activity_dict)
 
     return jsonify({'scheduled_activities': scheduled_activities_list})
 
 
+from datetime import datetime
+
+
 @main.route("/add_scheduled_activity", methods=['POST'])
 def add_scheduled_activity():
     data = request.get_json()
 
+    deadline = datetime.strptime(data['deadline'], "%Y-%m-%d")
+
     new_scheduled_activity = ScheduledActivity(activity_id=data['activity_id'], pet_id=data['pet_id'],
-                                               time=data['time'])
+                                               deadline=deadline)
     db.session.add(new_scheduled_activity)
     db.session.commit()
 
     return jsonify({"message": "Scheduled activity added"}), 201
+
+
+from datetime import datetime
 
 
 @main.route("/update_scheduled_activity/<int:scheduled_activity_id>", methods=['PUT'])
@@ -310,7 +319,7 @@ def update_scheduled_activity(scheduled_activity_id):
 
     scheduled_activity.activity_id = data['activity_id']
     scheduled_activity.pet_id = data['pet_id']
-    scheduled_activity.time = data['time']
+    scheduled_activity.deadline = datetime.strptime(data['deadline'], "%Y-%m-%d")
 
     db.session.commit()
 
@@ -334,14 +343,14 @@ from datetime import datetime
 @main.route("/scheduled_activities_today", methods=['GET'])
 def get_scheduled_activities_today():
     today = datetime.today().date()
-    scheduled_activities = ScheduledActivity.query.filter_by(date=today).all()
+    scheduled_activities = ScheduledActivity.query.filter(func.date(ScheduledActivity.deadline) == today).all()
 
     scheduled_activities_list = []
     for activity in scheduled_activities:
         activity_dict = {
             "activity_id": activity.activity_id,
             "pet_id": activity.pet_id,
-            "time": activity.time
+            "deadline": str(activity.deadline)
         }
         scheduled_activities_list.append(activity_dict)
 

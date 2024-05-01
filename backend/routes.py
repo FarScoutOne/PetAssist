@@ -11,6 +11,7 @@ def index():
     return "<h1>This is from the Blueprint</h1>"
 
 
+# Routes for Owners
 @main.route("/owners")
 def get_owners():
     owners = Owner.query.all()
@@ -49,6 +50,20 @@ def add_owner():
     return jsonify({"message": "Owner added"}), 201
 
 
+@main.route("/update_owner/<int:owner_id>", methods=['PUT'])
+def update_owner(owner_id):
+    owner = Owner.query.get_or_404(owner_id)
+    data = request.get_json()
+
+    owner.name = data['name']
+    owner.age = data['age']
+    owner.role = data['role']
+
+    db.session.commit()
+
+    return jsonify({"message": "Owner updated"}), 200
+
+
 @main.route('/owner/<int:id>', methods=['DELETE'])
 def delete_owner(id):
     owner_to_delete = Owner.query.get_or_404(id)
@@ -60,6 +75,7 @@ def delete_owner(id):
         return 'There was a problem deleting that owner'
 
 
+# Routes for Pets
 @main.route("/pets")
 def get_all_pets():
     pets = Pet.query.all()
@@ -96,6 +112,19 @@ def get_pet(pet_id):
     return jsonify(pet_dict)
 
 
+@main.route("/update_pet/<int:pet_id>", methods=['PUT'])
+def update_pet(pet_id):
+    pet = Pet.query.get_or_404(pet_id)
+    data = request.get_json()
+
+    pet.name = data['name']
+    pet.type = data['type']
+
+    db.session.commit()
+
+    return jsonify({"message": "Pet updated"}), 200
+
+
 @main.route('/pet/<int:id>', methods=['DELETE'])
 def delete_pet(id):
     pet_to_delete = Pet.query.get_or_404(id)
@@ -107,6 +136,7 @@ def delete_pet(id):
         return 'There was a problem deleting that owner'
 
 
+# Routes for Pet Foods
 @main.route("/add_food", methods=['POST'])
 def add_food():
     data = request.get_json()
@@ -116,6 +146,19 @@ def add_food():
     db.session.commit()
 
     return jsonify({"message": "Food added"}), 201
+
+
+@main.route("/update_food/<int:food_id>", methods=['PUT'])
+def update_food(food_id):
+    food = Food.query.get_or_404(food_id)
+    data = request.get_json()
+
+    food.brand = data['brand']
+    food.flavor = data['flavor']
+
+    db.session.commit()
+
+    return jsonify({"message": "Food updated"}), 200
 
 
 @main.route("/foods")
@@ -170,6 +213,7 @@ def add_food_to_pet():
     return jsonify({"message": "Food added to pet"}), 201
 
 
+# Routes for Activities
 @main.route("/activities")
 def get_all_activities():
     activities = Activity.query.all()
@@ -209,20 +253,6 @@ def get_activity(activity_id):
     return jsonify(activity_dict)
 
 
-@main.route("/update_owner/<int:owner_id>", methods=['PUT'])
-def update_owner(owner_id):
-    owner = Owner.query.get_or_404(owner_id)
-    data = request.get_json()
-
-    owner.name = data['name']
-    owner.age = data['age']
-    owner.role = data['role']
-
-    db.session.commit()
-
-    return jsonify({"message": "Owner updated"}), 200
-
-
 @main.route("/activities/<int:activity_id>", methods=['DELETE'])
 def delete_activity(activity_id):
     activity_to_delete = Activity.query.get_or_404(activity_id)
@@ -232,32 +262,6 @@ def delete_activity(activity_id):
         return redirect('/activities')
     except:
         return 'There was a problem deleting that activity'
-
-
-@main.route("/update_pet/<int:pet_id>", methods=['PUT'])
-def update_pet(pet_id):
-    pet = Pet.query.get_or_404(pet_id)
-    data = request.get_json()
-
-    pet.name = data['name']
-    pet.type = data['type']
-
-    db.session.commit()
-
-    return jsonify({"message": "Pet updated"}), 200
-
-
-@main.route("/update_food/<int:food_id>", methods=['PUT'])
-def update_food(food_id):
-    food = Food.query.get_or_404(food_id)
-    data = request.get_json()
-
-    food.brand = data['brand']
-    food.flavor = data['flavor']
-
-    db.session.commit()
-
-    return jsonify({"message": "Food updated"}), 200
 
 
 @main.route("/update_activity/<int:activity_id>", methods=['PUT'])
@@ -274,6 +278,7 @@ def update_activity(activity_id):
     return jsonify({"message": "Activity updated"}), 200
 
 
+# Routes for Scheduled Activities
 @main.route("/scheduled_activities", methods=['GET'])
 def get_scheduled_activities():
     scheduled_activities = ScheduledActivity.query.all()
@@ -313,6 +318,9 @@ def delete_scheduled_activity(scheduled_activity_id):
         return redirect('/scheduled_activities')
     except:
         return 'There was a problem deleting that scheduled activity'
+
+
+# Route for returning all activities scheduled for today
 
 
 def insert_data():

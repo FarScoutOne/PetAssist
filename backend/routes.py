@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, redirect
 from sqlalchemy import func
+from datetime import datetime
 
 from .models import Owner, Pet, Food, Activity, ScheduledActivity
 from .extensions import db
@@ -307,9 +308,6 @@ def add_scheduled_activity():
     db.session.commit()
 
     return jsonify({"message": "Scheduled activity added"}), 201
-
-
-from datetime import datetime
 
 
 @main.route("/update_scheduled_activity/<int:scheduled_activity_id>", methods=['PUT'])

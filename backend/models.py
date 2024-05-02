@@ -22,7 +22,7 @@ class Pet(db.Model):
     type = db.Column(db.String(100))
 
     foods = db.relationship("Food", secondary=pet_food, back_populates="pets")
-
+    scheduled_activities = db.relationship("ScheduledActivity", back_populates="pet")
 
 class Food(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -36,6 +36,8 @@ class Activity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     activityName = db.Column(db.String(100))
     activityDescription = db.Column(db.String(500))
+
+    scheduled_activities = db.relationship("ScheduledActivity", back_populates="activity")
 
 
 class ScheduledActivity(db.Model):

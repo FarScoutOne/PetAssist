@@ -344,11 +344,11 @@ def get_scheduled_activities_today():
     scheduled_activities = ScheduledActivity.query.filter(func.date(ScheduledActivity.deadline) == today).all()
 
     scheduled_activities_list = []
-    for activity in scheduled_activities:
+    for scheduled_activity in scheduled_activities:
         activity_dict = {
-            "activity_id": activity.activity_id,
-            "pet_id": activity.pet_id,
-            "deadline": str(activity.deadline)
+            "activity_name": scheduled_activity.activity.activityName,  # Assuming 'name' field exists in Activity model
+            "pet_name": scheduled_activity.pet.name,  # Assuming 'name' field exists in Pet model
+            "deadline": str(scheduled_activity.deadline)
         }
         scheduled_activities_list.append(activity_dict)
 

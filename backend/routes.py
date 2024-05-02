@@ -293,9 +293,6 @@ def get_scheduled_activities():
     return jsonify({'scheduled_activities': scheduled_activities_list})
 
 
-from datetime import datetime
-
-
 @main.route("/add_scheduled_activity", methods=['POST'])
 def add_scheduled_activity():
     data = request.get_json()
@@ -333,9 +330,6 @@ def delete_scheduled_activity(scheduled_activity_id):
         return redirect('/scheduled_activities')
     except:
         return 'There was a problem deleting that scheduled activity'
-
-
-from datetime import datetime
 
 
 @main.route("/scheduled_activities_today", methods=['GET'])

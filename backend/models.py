@@ -41,6 +41,8 @@ class Activity(db.Model):
 class ScheduledActivity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     activity_id = db.Column(db.ForeignKey("activity.id"))
+    activity = db.relationship("Activity", back_populates="scheduled_activities")
     owner_id = db.Column(db.ForeignKey("owner.id"))
     pet_id = db.Column(db.ForeignKey("pet.id"))
+    pet = db.relationship("Pet", back_populates="scheduled_activities")
     deadline = db.Column(db.DateTime)

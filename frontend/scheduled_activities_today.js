@@ -6,8 +6,8 @@ document.getElementById('load').addEventListener('click', function() {
             if (Array.isArray(activities)) {
                 const displayElement = document.getElementById('display');
                 let activitiesHTML = '';
-                activities.forEach(activity => {
-                    activitiesHTML += `<p>Activity ID: ${activity.activity_id}, Pet ID: ${activity.pet_id}, Deadline: ${activity.deadline}</p>`;
+                activities.forEach(scheduled_activity => {
+                    activitiesHTML += `<p>Activity: ${scheduled_activity.activity.activityName}, Pet: ${scheduled_activity.pet.name}, Deadline: ${scheduled_activity.deadline}</p>`;
                 });
                 displayElement.innerHTML = activitiesHTML;
             }

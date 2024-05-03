@@ -20,6 +20,7 @@ def get_owners():
     owner_list = []
     for owner in owners:
         owner_dict = {
+            "id": owner.id,
             "name": owner.name,
             "age": owner.age,
             "role": owner.role
@@ -304,9 +305,6 @@ def add_scheduled_activity():
     db.session.commit()
 
     return jsonify({"message": "Scheduled activity added"}), 201
-
-
-from datetime import datetime
 
 
 @main.route("/update_scheduled_activity/<int:scheduled_activity_id>", methods=['PUT'])

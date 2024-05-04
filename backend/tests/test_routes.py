@@ -30,6 +30,7 @@ def test_delete_owner(test_client, init_database):
     response = test_client.delete('/owner/1')
     assert response.status_code == 200
 
+
 def test_pets(test_client, init_database):
     response = test_client.get('/pets')
 
@@ -42,6 +43,36 @@ def test_pets(test_client, init_database):
     assert "name" in data["pets"][0]
     assert "type" in data["pets"][0]
 
+
 def test_delete_pet(test_client, init_database):
     response = test_client.delete('/pet/Spot')
     assert response.status_code == 200
+
+
+def test_foods(test_client, init_database):
+    response = test_client.get('/foods')
+
+    assert response.status_code == 200
+    data = json.loads(response.data.decode('utf-8'))
+    print(data)
+    print(type(data))
+    print(data["foods"])
+    assert isinstance(data["foods"], list)
+    assert "id" in data["foods"][0]
+    assert "brand" in data["foods"][0]
+    assert "flavor" in data["foods"][0]
+
+
+def test_delete_food(test_client, init_database):
+    response = test_client.delete('/foods/1')
+    assert response.status_code == 200
+
+
+def test_add_food_to_pet(test_client, init_database):
+    pet_food_data = {
+        "pet_name": "Whiskers",
+        "food_id": 3
+    }
+
+    response = test_client.post('/add_food_to_pet', data=json.dumps(pet_food_data), content_type='application/json')
+    assert response.status_code == 201

@@ -170,6 +170,7 @@ def get_all_foods():
     food_list = []
     for food in foods:
         food_dict = {
+            "id": food.id,
             "brand": food.brand,
             "flavor": food.flavor
         }
@@ -194,9 +195,10 @@ def delete_food(food_id):
     try:
         db.session.delete(food_to_delete)
         db.session.commit()
-        return redirect('/foods')
+        return jsonify({'message': 'The food has been deleted'}), 200
     except:
-        return 'There was a problem deleting that food'
+        return jsonify({'message': 'There was a problem deleting that food'}), 500
+
 
 
 @main.route("/add_food_to_pet", methods=['POST'])
@@ -377,8 +379,6 @@ def insert_data():
     # Assign food to pets
     new_pet1.foods.append(new_food2)
     new_pet2.foods.append(new_food2)
-    new_pet3.foods.append(new_food1)
-    new_pet3.foods.append(new_food3)
 
     db.session.add_all([new_food1, new_food2, new_food3])
     db.session.commit()

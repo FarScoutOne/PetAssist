@@ -388,34 +388,3 @@ def insert_data():
 
     db.session.add_all([feed_activity, play_activity])
     db.session.commit()
-
-# def query_tables():
-#     first_owner = Owner.query.first()
-#
-#     print("First Owner")
-#     for activity in first_owner.activities:
-#         print(f"Activity: {activity.activityName}  Pet: {activity.pet_id}")
-#
-#     print("Second Owner")
-#     second_owner = Owner.query.filter_by(id=2).first()
-#
-#     for activity in second_owner.activities:
-#         print(f"Activity: {activity.activityName}  Pet: {activity.pet_id}")
-#
-#
-# def query_pet_foods():
-#     first_pet = Pet.query.filter_by(name="Spot").first()
-#
-#     print("Spot's Food")
-#     for food in first_pet.foods:
-#         print(f"Food: {food.brand}: {food.flavor}")
-#
-#
-# def get_all_owners():
-#     owners = Owner.query.all()
-#
-#     for owner in owners:
-#         print(f"Owner name: {owner.name}")
-#
-#     owner_count = Owner.query.count()
-#     print(f"Owner count: {owner_count}")

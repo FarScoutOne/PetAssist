@@ -72,9 +72,9 @@ def delete_owner(id):
     try:
         db.session.delete(owner_to_delete)
         db.session.commit()
-        return redirect('/owners')
+        return jsonify({'message': 'The owner has been deleted'}), 200
     except:
-        return 'There was a problem deleting that owner'
+        return jsonify({'message': 'There was a problem deleting that owner'}), 500
 
 
 # Routes for Pets
@@ -133,9 +133,9 @@ def delete_pet(pet_name):
     try:
         db.session.delete(pet_to_delete)
         db.session.commit()
-        return redirect('/pets')
+        return jsonify({'message': 'The pet has been deleted'}), 200
     except:
-        return 'There was a problem deleting that pet'
+        return jsonify({'message': 'There was a problem deleting that owner'}), 500
 
 
 # Routes for Pet Foods

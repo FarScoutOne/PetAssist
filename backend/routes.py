@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, redirect
 from sqlalchemy import func
+from datetime import datetime
 
 from .models import Owner, Pet, Food, Activity, ScheduledActivity
 from .extensions import db
@@ -20,6 +21,7 @@ def get_owners():
     owner_list = []
     for owner in owners:
         owner_dict = {
+            "id": owner.id,
             "name": owner.name,
             "age": owner.age,
             "role": owner.role
@@ -33,6 +35,7 @@ def get_owners():
 def get_owner(owner_id):
     owner = Owner.query.get_or_404(owner_id)
     owner_dict = {
+        "id": owner.id,
         "name": owner.name,
         "age": owner.age,
         "role": owner.role
@@ -169,6 +172,7 @@ def get_all_foods():
     food_list = []
     for food in foods:
         food_dict = {
+            "id": food.id,
             "brand": food.brand,
             "flavor": food.flavor
         }
@@ -181,6 +185,7 @@ def get_all_foods():
 def get_food(food_id):
     food = Food.query.get_or_404(food_id)
     food_dict = {
+        "id": food.id,
         "brand": food.brand,
         "flavor": food.flavor
     }
@@ -290,9 +295,6 @@ def get_scheduled_activities():
         scheduled_activities_list.append(activity_dict)
 
     return jsonify({'scheduled_activities': scheduled_activities_list})
-
-
-from datetime import datetime
 
 
 @main.route("/add_scheduled_activity", methods=['POST'])

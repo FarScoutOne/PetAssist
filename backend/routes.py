@@ -200,6 +200,12 @@ def delete_food(food_id):
         return jsonify({'message': 'There was a problem deleting that food'}), 500
 
 
+@main.route("/foods/<string:pet_name>", methods=['GET'])
+def get_foods_for_pet(pet_name):
+    pet = Pet.query.filter_by(name=pet_name).first_or_404()
+    foods = [{"brand": food.brand, "flavor": food.flavor} for food in pet.foods]
+    return jsonify({"foods": foods})
+
 
 @main.route("/add_food_to_pet", methods=['POST'])
 def add_food_to_pet():
@@ -215,6 +221,30 @@ def add_food_to_pet():
     db.session.commit()
 
     return jsonify({"message": "Food added to pet"}), 201
+
+
+@main.route("/remove_food_from_pet", methods=['DELETE'])
+def remove_food_from_pet():
+    data = request.get_json()
+    pet_name = data['pet_name']
+    food_id = data['food_id']
+
+    pet = Pet.query.filter_by(name=pet_name).first()  # query for the pet object based on its name
+    if not pet:
+        return jsonify({"Error": "Pet not found"}), 404
+
+    food = Food.query.get(food_id)  # query for the food object based on its id
+    if not food:
+        return jsonify({"Error": "Food not found"}), 404
+
+    # assuming 'foods' is the relationship property in the Pet model
+    if food not in pet.foods:
+        return jsonify({"Error": "This pet is not associated with this food"}), 404
+
+    pet.foods.remove(food)  # remove the association
+    db.session.commit()
+
+    return jsonify({"Success": f"Food with id {food_id} has been removed from {pet_name}"}), 200
 
 
 # Routes for Activities

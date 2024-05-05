@@ -26,6 +26,17 @@ def test_add_owner(test_client, init_database):
     assert response.status_code == 201
 
 
+def test_update_owner(test_client, init_database):
+    owner_data = {
+        "id": 1,
+        "name": "Bob",
+        "age": 35,
+        "role": "parent"
+    }
+    response = test_client.put(f'/update_owner/{owner_data["id"]}', data=json.dumps(owner_data), content_type='application/json')
+    assert response.status_code == 200
+
+
 def test_delete_owner(test_client, init_database):
     response = test_client.delete('/owner/1')
     assert response.status_code == 200
@@ -63,9 +74,21 @@ def test_foods(test_client, init_database):
     assert "flavor" in data["foods"][0]
 
 
+def test_add_food(test_client, init_database):
+    food_data = {
+        "brand": "Purina",
+        "flavor": "Chicken"
+    }
+    response = test_client.post('/add_food', data=json.dumps(food_data), content_type='application/json')
+    assert response.status_code == 201
+
+
 def test_delete_food(test_client, init_database):
     response = test_client.delete('/foods/1')
     assert response.status_code == 200
+
+
+def test_
 
 
 def test_add_food_to_pet(test_client, init_database):

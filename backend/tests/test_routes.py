@@ -88,9 +88,6 @@ def test_delete_food(test_client, init_database):
     assert response.status_code == 200
 
 
-def test_
-
-
 def test_add_food_to_pet(test_client, init_database):
     pet_food_data = {
         "pet_name": "Whiskers",
@@ -99,3 +96,15 @@ def test_add_food_to_pet(test_client, init_database):
 
     response = test_client.post('/add_food_to_pet', data=json.dumps(pet_food_data), content_type='application/json')
     assert response.status_code == 201
+
+
+def test_get_foods_for_pet(test_client, init_database):
+    response = test_client.get('/foods/Whiskers')
+    assert response.status_code == 200
+    data = json.loads(response.data.decode('utf-8'))
+    print(data)
+    print(type(data))
+    print(data["foods"])
+    assert isinstance(data["foods"], list)
+    assert "brand" in data["foods"][0]
+    assert "flavor" in data["foods"][0]

@@ -33,7 +33,8 @@ def test_update_owner(test_client, init_database):
         "age": 35,
         "role": "parent"
     }
-    response = test_client.put(f'/update_owner/{owner_data["id"]}', data=json.dumps(owner_data), content_type='application/json')
+    response = test_client.put(f'/update_owner/{owner_data["id"]}', data=json.dumps(owner_data),
+                               content_type='application/json')
     assert response.status_code == 200
 
 
@@ -115,4 +116,53 @@ def test_remove_food_from_pet(test_client, init_database):
 
     response = test_client.delete('/remove_food_from_pet', data=json.dumps(food_to_remove),
                                   content_type='application/json')
+    assert response.status_code == 200
+
+
+def test_get_all_activities(test_client, init_database):
+    response = test_client.get('/activities')
+    assert response.status_code == 200
+    data = json.loads(response.data.decode('utf-8'))
+    print(data)
+    print(type(data))
+    print(data["activities"])
+    assert isinstance(data["activities"], list)
+    assert "name" in data["activities"][0]
+    assert "description" in data["activities"][0]
+
+
+def test_add_activity(test_client, init_database):
+    activity_data = {
+        "activityName": "Brushing",
+        "activityDescription": "Brush them gently from head to tail and get all of the loose hair off. Make sure to "
+                               "give a treat at the end."
+    }
+    response = test_client.post('/add_activity', data=json.dumps(activity_data), content_type='application/json')
+    assert response.status_code == 201
+
+
+def test_get_activity(test_client, init_database):
+    response = test_client.get('/activities/1')
+    assert response.status_code == 200
+    data = json.loads(response.data.decode('utf-8'))
+    print(data)
+    print(type(data))
+    assert isinstance(data, dict)
+    assert "name" in data
+    assert "description" in data
+
+
+def test_update_activity(test_client, init_database):
+    activity_data = {
+        "activityName": "play",
+        "activityDescription": "Play indoors and get him to run around and catch. Give him a tree to reinforce good "
+                               "behavior."
+    }
+    response = test_client.put('/update_activity/1', data=json.dumps(activity_data),
+                               content_type='application/json')
+    assert response.status_code == 200
+
+
+def test_delete_activity(test_client, init_database):
+    response = test_client.delete('/activities/1')
     assert response.status_code == 200

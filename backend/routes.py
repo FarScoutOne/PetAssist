@@ -1,9 +1,8 @@
 from flask import Blueprint, request, jsonify, redirect
 from sqlalchemy import func
-from datetime import datetime
 
-from .models import Owner, Pet, Food, Activity, ScheduledActivity
 from .extensions import db
+from .models import Owner, Pet, Food, Activity, ScheduledActivity
 
 main = Blueprint("main", __name__)
 
@@ -293,9 +292,9 @@ def delete_activity(activity_id):
     try:
         db.session.delete(activity_to_delete)
         db.session.commit()
-        return redirect('/activities')
+        return jsonify({"message": "Activity has been deleted"}), 200
     except:
-        return 'There was a problem deleting that activity'
+        return jsonify({"message": "There was a problem deleting that activity"}), 500
 
 
 @main.route("/update_activity/<int:activity_id>", methods=['PUT'])

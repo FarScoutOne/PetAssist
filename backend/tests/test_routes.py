@@ -108,3 +108,11 @@ def test_get_foods_for_pet(test_client, init_database):
     assert isinstance(data["foods"], list)
     assert "brand" in data["foods"][0]
     assert "flavor" in data["foods"][0]
+
+
+def test_remove_food_from_pet(test_client, init_database):
+    food_to_remove = {"pet_name": "Whiskers", "food_id": 3}
+
+    response = test_client.delete('/remove_food_from_pet', data=json.dumps(food_to_remove),
+                                  content_type='application/json')
+    assert response.status_code == 200

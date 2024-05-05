@@ -106,9 +106,9 @@ def add_pet():
     return jsonify({"message": "Pet added"}), 201
 
 
-@main.route("/pets/<int:pet_id>", methods=['GET'])
-def get_pet(pet_id):
-    pet = Pet.query.get_or_404(pet_id)
+@main.route("/pets/<string:pet_name>", methods=['GET'])
+def get_pet(pet_name):
+    pet = Pet.query.filter_by(name=pet_name).first_or_404()
     pet_dict = {
         "name": pet.name,
         "type": pet.type
@@ -116,9 +116,9 @@ def get_pet(pet_id):
     return jsonify(pet_dict)
 
 
-@main.route("/update_pet/<int:pet_id>", methods=['PUT'])
-def update_pet(pet_id):
-    pet = Pet.query.get_or_404(pet_id)
+@main.route("/update_pet/<string:pet_name>", methods=['PUT'])
+def update_pet(pet_name):
+    pet = Pet.query.filter_by(name=pet_name).first_or_404()
     data = request.get_json()
 
     pet.name = data['name']
@@ -129,15 +129,15 @@ def update_pet(pet_id):
     return jsonify({"message": "Pet updated"}), 200
 
 
-@main.route('/pet/<int:id>', methods=['DELETE'])
-def delete_pet(id):
-    pet_to_delete = Pet.query.get_or_404(id)
+@main.route('/pet/<string:pet_name>', methods=['DELETE'])
+def delete_pet(pet_name):
+    pet_to_delete = Pet.query.filter_by(name=pet_name).first_or_404()
     try:
         db.session.delete(pet_to_delete)
         db.session.commit()
         return redirect('/pets')
     except:
-        return 'There was a problem deleting that owner'
+        return 'There was a problem deleting that pet'
 
 
 # Routes for Pet Foods
@@ -207,10 +207,10 @@ def delete_food(food_id):
 def add_food_to_pet():
     data = request.get_json()
 
-    pet_id = data['pet_id']
+    pet_name = data['pet_name']
     food_id = data['food_id']
 
-    pet = Pet.query.get(pet_id)
+    pet = Pet.query.get(pet_name)
     food = Food.query.get(food_id)
 
     pet.foods.append(food)
@@ -289,7 +289,7 @@ def get_scheduled_activities():
     for activity in scheduled_activities:
         activity_dict = {
             "activity_id": activity.activity_id,
-            "pet_id": activity.pet_id,
+            "pet_name": activity.pet_name,
             "deadline": activity.deadline
         }
         scheduled_activities_list.append(activity_dict)
@@ -303,15 +303,12 @@ def add_scheduled_activity():
 
     deadline = datetime.strptime(data['deadline'], "%Y-%m-%d")
 
-    new_scheduled_activity = ScheduledActivity(activity_id=data['activity_id'], pet_id=data['pet_id'],
+    new_scheduled_activity = ScheduledActivity(activity_id=data['activity_id'], pet_name=data['pet_name'],
                                                deadline=deadline)
     db.session.add(new_scheduled_activity)
     db.session.commit()
 
     return jsonify({"message": "Scheduled activity added"}), 201
-
-
-from datetime import datetime
 
 
 @main.route("/update_scheduled_activity/<int:scheduled_activity_id>", methods=['PUT'])
@@ -320,7 +317,7 @@ def update_scheduled_activity(scheduled_activity_id):
     data = request.get_json()
 
     scheduled_activity.activity_id = data['activity_id']
-    scheduled_activity.pet_id = data['pet_id']
+    scheduled_activity.pet_name = data['pet_name']
     scheduled_activity.deadline = datetime.strptime(data['deadline'], "%Y-%m-%d")
 
     db.session.commit()

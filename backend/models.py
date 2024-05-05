@@ -7,22 +7,20 @@ class Owner(db.Model):
     age = db.Column(db.Integer)
     role = db.Column(db.String(100))
 
-    # activities = db.relationship("Activity", back_populates="owner")
-
 
 pet_food = db.Table("pet_food",
-                    db.Column("pet_id", db.ForeignKey("pet.id"), primary_key=True),
+                    db.Column("pet_name", db.ForeignKey("pet.name"), primary_key=True),
                     db.Column("food_id", db.ForeignKey("food.id"), primary_key=True)
                     )
 
 
 class Pet(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
+    name = db.Column(db.String(100), primary_key=True)
     type = db.Column(db.String(100))
 
     foods = db.relationship("Food", secondary=pet_food, back_populates="pets")
     scheduled_activities = db.relationship("ScheduledActivity", back_populates="pet")
+
 
 class Food(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -45,6 +43,6 @@ class ScheduledActivity(db.Model):
     activity_id = db.Column(db.ForeignKey("activity.id"))
     activity = db.relationship("Activity", back_populates="scheduled_activities")
     owner_id = db.Column(db.ForeignKey("owner.id"))
-    pet_id = db.Column(db.ForeignKey("pet.id"))
+    pet_name = db.Column(db.ForeignKey("pet.name"))
     pet = db.relationship("Pet", back_populates="scheduled_activities")
     deadline = db.Column(db.DateTime)

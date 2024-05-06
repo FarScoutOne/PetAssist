@@ -166,3 +166,58 @@ def test_update_activity(test_client, init_database):
 def test_delete_activity(test_client, init_database):
     response = test_client.delete('/activities/1')
     assert response.status_code == 200
+
+
+def test_get_scheduled_activities(test_client, init_database):
+    response = test_client.get('/scheduled_activities')
+    assert response.status_code == 200
+    data = json.loads(response.data.decode('utf-8'))
+    scheduled_activities = data["scheduled_activities"]
+    print(scheduled_activities)
+    print(type(scheduled_activities))
+    assert isinstance(scheduled_activities, list)
+    assert "activity_id" in scheduled_activities[0]
+    assert "pet_name" in scheduled_activities[0]
+    assert "deadline" in scheduled_activities[0]
+
+
+def test_add_scheduled_activity(test_client, init_database):
+    scheduled_activity_data = {
+        "activity_id": 1,
+        "pet_name": "Whiskers",
+        "deadline": "2024-05-15"
+    }
+
+    response = test_client.post('/add_scheduled_activity', data=json.dumps(scheduled_activity_data),
+                                content_type='application/json')
+    assert response.status_code == 201
+
+
+def test_update_scheduled_activity(test_client, init_database):
+    scheduled_activity_data = {
+        "activity_id": 2,
+        "pet_name": "Whiskers",
+        "deadline": "2024-05-15"
+    }
+
+    response = test_client.put('/update_scheduled_activity/1', data=json.dumps(scheduled_activity_data),
+                               content_type='application/json')
+    assert response.status_code == 200
+
+
+def test_delete_scheduled_activity(test_client, init_database):
+    response = test_client.delete('/update_scheduled_activity/1')
+    assert response.status_code == 200
+
+
+def test_get_scheduled_activities_today(test_client, init_database):
+    response = test_client.get('/scheduled_activities_today')
+    assert response.status_code == 200
+    data = json.loads(response.data.decode('utf-8'))
+    scheduled_activities = data["scheduled_activities"]
+    print(scheduled_activities)
+    print(type(scheduled_activities))
+    assert isinstance(scheduled_activities, list)
+    assert "activity_name" in scheduled_activities[0]
+    assert "pet_name" in scheduled_activities[0]
+    assert "deadline" in scheduled_activities[0]

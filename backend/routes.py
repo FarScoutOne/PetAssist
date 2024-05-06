@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, redirect
 from sqlalchemy import func
+from datetime import datetime
 
 from .extensions import db
 from .models import Owner, Pet, Food, Activity, ScheduledActivity
@@ -361,12 +362,9 @@ def delete_scheduled_activity(scheduled_activity_id):
     try:
         db.session.delete(scheduled_activity)
         db.session.commit()
-        return redirect('/scheduled_activities')
+        return jsonify({"message": "Scheduled activity has been deleted"}), 200
     except:
-        return 'There was a problem deleting that scheduled activity'
-
-
-from datetime import datetime
+        return jsonify({"message": "There was a problem deleting that scheduled activity"}), 500
 
 
 @main.route("/scheduled_activities_today", methods=['GET'])
@@ -422,6 +420,14 @@ def insert_data():
                              activityDescription="Play indoors and get him to run around and catch.")
 
     db.session.add_all([feed_activity, play_activity])
+    db.session.commit()
+
+    # Schedule an activity
+    scheduled1 = ScheduledActivity(activity_id=2, owner_id=2, pet_name="Whiskers", deadline=datetime(2024, 5, 6))
+    scheduled2 = ScheduledActivity(activity_id=3, owner_id=1, pet_name="Bruiser", deadline=datetime(2024, 5, 6))
+    scheduled3 = ScheduledActivity(activity_id=2, owner_id=3, pet_name="Whiskers", deadline=datetime.now().date())
+
+    db.session.add_all([scheduled1, scheduled2, scheduled3])
     db.session.commit()
 
 # def query_tables():
